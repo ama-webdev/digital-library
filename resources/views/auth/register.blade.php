@@ -1,7 +1,14 @@
-@extends('layouts.app')
-
+@extends('user.layouts.master')
+@section('style')
+    <style>
+        .register-form{
+            padding-top: 7rem;
+            min-height: 100vh;
+        }
+    </style>
+@endsection
 @section('content')
-<div class="container">
+<div class="container register-form">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
