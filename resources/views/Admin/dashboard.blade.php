@@ -49,7 +49,7 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-4">
+    <div class="col-3">
         <a href="{{route('admin.users')}}" class="dash-card bg-warning">
             <i class="fas fa-users dash-card-icon"></i>
             <div class="dash-card-text">
@@ -58,17 +58,17 @@
             </div>
         </a>
     </div>
-    <div class="col-4">
+    <div class="col-3">
         <a href="{{route('admin.book-categories')}}" class="dash-card bg-info">
             <i class="fas fa-list dash-card-icon"></i>
             <div class="dash-card-text">
                 <p>{{$category_count}}</p>
-                <p>Book Categoires</p>
+                <p>Categoires</p>
             </div>
         </a>
     </div>
-    <div class="col-4">
-        <a href="{{route('admin.books')}}" class="dash-card bg-danger">
+    <div class="col-3">
+        <a href="{{route('admin.books')}}" class="dash-card bg-success">
             <i class="fas fa-book dash-card-icon"></i>
             <div class="dash-card-text">
                 <p>{{$book_count}}</p>
@@ -76,46 +76,98 @@
             </div>
         </a>
     </div>
+    <div class="col-3">
+        <a href="{{route('admin.rentals.index')}}" class="dash-card bg-danger">
+            <i class="fas fa-hand-holding-heart dash-card-icon"></i>
+            <div class="dash-card-text">
+                <p>{{$rental_count}}</p>
+                <p>Rentals</p>
+            </div>
+        </a>
+    </div>
 </div>
 <div class="row mt-5">
        <div class="col-12">
-        <h4 class="my-3 mb-5">Book Management</h4>
+        <h4 class="my-3 mb-5">Rental Management</h4>
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Photo</th>
-                        <th>Title</th>
-                        <th>Author</th>
-                        <th>Description</th>
-                        <th>Category</th>
+                        <th>Code</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Return Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Duration</th>
+                        <th>Remain</th>
+                        <th>Over</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($books as $book)
-                        <tr>
-                            <td>
-                                <img src="{{$book->photo}}" alt="">
-                            </td>
-                            <td><a href="{{$book->file}}">{{$book->title}}</a></td>
-                            <td>{{$book->author}}</td>
-                            <td>{!! $book->description !!}</td>
-                            <td>{{$book->book_category->name}}</td>
-                            <td>
-                               <div class="btn-group">
-                                    <a href="{{route('admin.books.edit',$book->id)}}" class="btn btn-sm btn-warning">Edit</a>
-                                    <a href="" class="btn btn-sm btn-danger delete-btn">Delete</a>
-                                    <form action="{{route('admin.books.destroy',$book->id)}}" method="POST" class="d-none delete-form">
-                                        @csrf
-                                    </form>
-                               </div>
-                            </td>
-                        </tr>
+                    @foreach ($rentals as $rental)
+                    <tr>
+                        <td>{{$rental->code}}</td>
+                        <td>{{$rental->user->name}}</td>
+                        <td>{{$rental->user->email}}</td>
+                        <td>{{\Carbon\Carbon::parse($rental->start_date)->format('d-m-Y')}}</td>
+                        <td>{{\Carbon\Carbon::parse($rental->end_date)->format('d-m-Y')}}</td>
+                        <td>{{\Carbon\Carbon::parse($rental->return_date)->format('d-m-Y')}}</td>
+                        <td>{{$rental->total}}</td>
+                        <td class="text-uppercase">{{$rental->status}}</td>
+                        @php
+                            $end_date=\Carbon\Carbon::parse($rental->end_date);
+                            $start_date=\Carbon\Carbon::parse($rental->start_date);
+                            if($rental->end_date < now()){
+                                $remain = '-'   ;
+                                $over = (now()->diffInDays($end_date) + 1) .' days';
+                            }else{
+                                $remain = (now()->diffInDays($end_date) + 1) .' days';
+                                $over = '-';
+                            }
+                            $duration = ($start_date->diffInDays($end_date) + 1) .' days';
+                        @endphp
+                        <td>{{$duration}}</td>
+                        <td class="text-success">
+                            @if ($rental->status=='borrow')
+                                {{$remain}}
+                            @else
+                            -
+                            @endif
+                        </td>
+                        <td class="text-danger">
+                            @if ($rental->status=='borrow')
+                                {{$over}}
+                            @else
+                            -
+                            @endif
+                        </td>
+                         <td>
+                            <a href="{{route('admin.rentals.show',$rental->id)}}" class="">
+                                <i class="fas fa-info-circle text-success"></i>
+                            </a>
+                            @if($rental->status=='borrow' || $rental->status=='draft')
+                            <a href="{{route('admin.rentals.edit',$rental->id)}}" class="">
+                                <i class="fas fa-edit text-warning"></i>
+                            </a>
+                            @endif
+                            @if($rental->status=='draft')
+                            <a href="#" class="delete-btn" data-id="{{$rental->id}}">
+                                <i class="fas fa-trash text-danger"></i>
+                            </a>
+                            <form id="delete-form" action="{{ route('admin.rentals.destroy',$rental->id) }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                            @endif
+                        </td>
+                    </tr>
                     @endforeach
+                    {{ $rentals->links() }}
                 </tbody>
             </table>
-            {{$books->links()}}
         </div>
        </div>
     </div>

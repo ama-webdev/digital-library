@@ -2,6 +2,21 @@
 @section('style')
 <style>
     
+   .book{
+        border:1px solid #ddd;
+        border-radius: 3px;
+        overflow: hidden
+    }
+    .book img{
+        max-width: 100%;
+        transition:.3s ease;
+        max-height: 150px;
+        margin: 0 auto;
+        display: block;
+    }
+    .book img:hover{
+        transform: scale(1.1)
+    }
 </style>
 @endsection
 @section('content')
@@ -34,18 +49,21 @@
         <div class="row mt-3">
             @foreach($books as $book)
                 <div class="col-lg-3 col-md-6 col-sm-12 col-12 mb-3">
-                    <div class="card">
-                        <img src="{{asset($book->photo)}}" class="card-img-top" alt="..." style="max-height:200px">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">{{$book->title}}</h5>
-                            <p class="text-muted mb-0">{{\Carbon\Carbon::parse($book->created_at)->format('D, M Y')}}</p>
-                            <p class="fw-bold">{{$book->author}}</p>
-                            <div class="btn-group">
-                                <a href="{{asset($book->file)}}" class="btn btn-danger btn-sm">Download</a>
-                                <a href="{{route('user.book-detail',[$book->id])}}" class="btn btn-primary btn-sm">View</a>
-                            </div>
+                    <div class="book">
+                    <img src="{{asset($book->photo)}}" alt="">
+                    <div class="p-3">
+                        <a href="{{route('user.book-detail',$book->id)}}" class="fw-bold">{{$book->title}}</a>
+                        <p style="font-size:.8rem;">{{$book->author}}</p>
+                        <p class="text-danger">{{number_format($book->qty,0)}} items left.</p>
+
+                        <div class="btn-group">
+                            <a href="{{route('user.book-detail',$book->id)}}" class="btn btn-sm btn-primary">View</a>
+                            @auth
+                            <button data-id="{{$book->id}}" data-photo="{{$book->photo}}" data-title="{{$book->title}}" data-author="{{$book->author}}" class="btn btn-sm btn-success save-book">Save</button>
+                            @endauth
                         </div>
                     </div>
+                </div>
                 </div>
             @endforeach
             {{$books->links()}}
@@ -63,6 +81,72 @@
             history.pushState(null,'',`?cat=${cat}&title=${title}&author=${author}`);
             window.location.reload();
         });
+
+        $('.save-book').click(function (e) { 
+            e.preventDefault();
+            var id=$(this).data('id')
+            var photo=$(this).data('photo')
+            var title=$(this).data('title')
+            var author=$(this).data('author');
+
+            var data={
+                'id':id,
+                'title':title,
+                'photo':photo,
+                'author':author,
+                'qty':1
+            };
+            addItemToCart(data)
+        });
+        function addItemToCart (data) { 
+            var cart=JSON.parse(localStorage.getItem('cart'));
+            var flag=true;
+            var count=0;
+            if(cart){
+                var has_product=cart.findIndex(i=> i.id==data['id']);
+                $.each(cart, function (i, v) {
+                    count += v.qty;
+                });
+                if(count>=3){
+                    alert('You can save only 3 books.');
+                    return;
+                }
+                if(has_product >= 0){
+                    cart[has_product].qty++;
+                }else{
+                    cart.push(data);
+                }
+                localStorage.setItem('cart',JSON.stringify(cart));
+            }else{
+                localStorage.setItem('cart',JSON.stringify([data]))
+            }
+            showCartCount()
+        }
+
+        // remove item
+            $(".cart-table-body").on('click','.remove-item', function () {
+                var result=confirm('Are You Sure?');
+                if (result) {
+                    var row_id=$(this).data('row_id');
+                    var cart=JSON.parse(localStorage.getItem('cart'))
+                    cart.splice(row_id,1);
+                    localStorage.setItem('cart',JSON.stringify(cart));
+                    showCart();
+                    showCartCount()
+                }
+            });
+        
+        // show cart count
+        function showCartCount() {
+            var count = 0;
+            var cart = JSON.parse(localStorage.getItem('cart'));
+            if (cart) {
+                $.each(cart, function (i, v) {
+                    count += v.qty;
+                });
+            }
+            $(".item-count").text(count);
+        }
     });
     </script>
 @endsection

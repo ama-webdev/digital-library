@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\UserPageController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\BookCategoryController;
+use App\Http\Controllers\Admin\RentalController;
 
 Auth::routes();
 Route::name('user.')->group(function () {
@@ -16,6 +17,11 @@ Route::middleware(['auth'])->name('user.')->group(function () {
     Route::get('/about', [UserPageController::class, 'about'])->name('about');
     Route::get('/books', [UserPageController::class, 'books'])->name('books');
     Route::get('/books/{book_id}', [UserPageController::class, 'bookDetail'])->name('book-detail');
+    Route::get('/cart', [UserPageController::class, 'showCart'])->name('show-cart');
+    Route::post('/borrow', [UserPageController::class, 'borrow'])->name('borrow');
+    Route::get('/rental-list', [UserPageController::class, 'rentalList'])->name('rental-list');
+    Route::get('/rental-list/{id}', [UserPageController::class, 'rentalDetail'])->name('rental-detail');
+    Route::post('/rental-list/delete/{id}', [UserPageController::class, 'rentalDelete'])->name('rental-delete');
 
     Route::get('change-password', [UserPageController::class, 'showChangePassword'])->name('show-change-password');
     Route::post('change-password', [UserPageController::class, 'changePassword'])->name('change-password');
@@ -53,4 +59,14 @@ Route::middleware(['auth', 'role:admin|librarian'])->name('admin.')->prefix('adm
     // change password
     Route::get('change-password', [AdminPageController::class, 'changePassword'])->name('change-password');
     Route::get('change-student-password', [AdminPageController::class, 'showChangeStudentPassword'])->name('change-student-password');
+
+    // rent
+    Route::get('/rentals', [RentalController::class, 'index'])->name('rentals.index');
+    Route::get('/rentals/{id}', [RentalController::class, 'show'])->name('rentals.show');
+    Route::post('/rentals/delete/{id}', [RentalController::class, 'destroy'])->name('rentals.destroy');
+    Route::post('/rentals/rent/{id}', [RentalController::class, 'rent'])->name('rentals.rent');
+    Route::get('/rentals/edit/{id}', [RentalController::class, 'edit'])->name('rentals.edit');
+    Route::get('/rentals/create', [RentalController::class, 'create'])->name('rentals.create');
+    // rent-detail
+    Route::post('/rentals-detail/delete/{id}', [RentalController::class, 'detailDelete'])->name('rental-detail.delete');
 });

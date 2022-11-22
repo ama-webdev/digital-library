@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>Freelance</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
@@ -30,6 +31,11 @@
         <li class="nav-item">
           <a class="nav-link" href="{{route('user.books')}}">Books</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link position-relative" href="{{route('user.show-cart')}}">Cart 
+            <span class="badge text-bg-secondary item-count">0</span>
+          </a>
+        </li>
         @guest
         @if (Route::has('login'))
             <li class="nav-item">
@@ -54,6 +60,9 @@
                                     document.getElementById('logout-form').submit();">
                     {{ __('Logout') }}
                 </a>
+                <a class="dropdown-item" href="{{ route('user.rental-list') }}">
+                    Rental List
+                </a>
 
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                     @csrf
@@ -75,10 +84,29 @@
     <script src="{{asset('js/user/owl.carousel.min.js')}}"></script>
     <script>
       $(document).ready(function () {
+        showCartCount();
         $(".back-btn").click(function(){
           window.history.go('-1');
         })
       });
+     
+      $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      });
+      function showCartCount() {
+        var count = 0;
+        var cart = JSON.parse(localStorage.getItem('cart'));
+        if (cart) {
+            $.each(cart, function (i, v) {
+                count += v.qty;
+            });
+        }
+        
+        $(".item-count").text(count);
+    }
+
     </script>
     @yield('script')
 </body>

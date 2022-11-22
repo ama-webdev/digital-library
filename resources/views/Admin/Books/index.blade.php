@@ -29,6 +29,7 @@
                         <th>Author</th>
                         <th>Description</th>
                         <th>Category</th>
+                        <th>Qty</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -38,10 +39,11 @@
                             <td>
                                 <img src="{{$book->photo}}" alt="">
                             </td>
-                            <td><a href="{{$book->file}}">{{$book->title}}</a></td>
+                            <td>{{$book->title}}</td>
                             <td>{{$book->author}}</td>
-                            <td>{!! $book->description !!}</td>
+                            <td>{!! Str::limit($book->description, 30) !!}</td>
                             <td>{{$book->book_category->name}}</td>
+                            <td>{{$book->qty}}</td>
                             <td>
                                <div class="btn-group">
                                     <a href="{{route('admin.books.edit',$book->id)}}" class="btn btn-sm btn-warning">Edit</a>

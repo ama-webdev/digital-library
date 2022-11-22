@@ -35,7 +35,7 @@ class BookController extends Controller
             'description' => 'required|string',
             'book_category_id' => 'required|exists:book_categories,id',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'file' => 'required|mimes:pdf'
+            'qty' => 'required|integer'
         ]);
 
         $title = $request->title;
@@ -43,17 +43,13 @@ class BookController extends Controller
         $author = $request->author;
         $description = $request->description;
         $book_category_id = $request->book_category_id;
-        $file = $request->file;
+        $qty = $request->qty;
 
         // store image in products folder
         $photo_name = uniqid() . date('Ymd') .  '.' . $photo->extension();
         $photo_url = "/images/template/books/$photo_name";
         $photo->move(public_path('/images/template/books'), $photo_name);
 
-        // store pdf in ebook folder
-        $file_name = uniqid() . date('Ymd') .  '.' . $file->extension();
-        $file_url = "/images/template/ebooks/$file_name";
-        $file->move(public_path('/images/template/ebooks'), $file_name);
 
         // insert record
         $book = new Book();
@@ -62,7 +58,7 @@ class BookController extends Controller
         $book->author = $author;
         $book->description = $description;
         $book->book_category_id = $book_category_id;
-        $book->file = $file_url;
+        $book->qty = $qty;
         $book->save();
         return redirect()->route('admin.books');
     }
@@ -83,7 +79,7 @@ class BookController extends Controller
             'description' => 'required|string',
             'book_category_id' => 'required|exists:book_categories,id',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'file' => 'nullable|mimes:pdf'
+            'qty' => 'required|integer'
         ]);
 
         $title = $request->title;
@@ -91,7 +87,7 @@ class BookController extends Controller
         $author = $request->author;
         $description = $request->description;
         $book_category_id = $request->book_category_id;
-        $file = $request->file;
+        $qty = $request->qty;
 
         if ($photo) {
             // store image in products folder
@@ -108,28 +104,13 @@ class BookController extends Controller
             $photo_url = $old_photo;
         }
 
-        if ($file) {
-            // store pdf in ebook folder
-            $file_name = uniqid() . date('Ymd') .  '.' . $file->extension();
-            $file_url = "/images/template/ebooks/$file_name";
-            $file->move(public_path('/images/template/ebooks'), $file_name);
-
-            // delete old image if has new image
-            $old_file_url = substr($old_file, 1);
-            if (File::exists($old_file_url)) {
-                File::delete($old_file_url);
-            }
-        } else {
-            $file_url = $old_file;
-        }
-
         // insert record
         $book->title = $title;
         $book->photo = $photo_url;
         $book->author = $author;
         $book->description = $description;
         $book->book_category_id = $book_category_id;
-        $book->file = $file_url;
+        $book->qty = $qty;
         $book->update();
         return redirect()->route('admin.books');
     }
@@ -140,10 +121,6 @@ class BookController extends Controller
         $photo_url = substr($book->photo, 1);
         if (File::exists($photo_url)) {
             File::delete($photo_url);
-        }
-        $file_url = substr($book->file, 1);
-        if (File::exists($file_url)) {
-            File::delete($file_url);
         }
         return redirect()->route('admin.books');
     }

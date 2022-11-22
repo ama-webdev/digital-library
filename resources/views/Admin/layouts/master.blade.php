@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+
 
     <title>Freelance</title>
     <!-- Custom fonts for this template-->
@@ -54,6 +56,13 @@
                 </a>
             </li>
             @endrole
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item @yield('rentals-active')">
+                <a class="nav-link" href="{{route('admin.rentals.index')}}">
+                    <i class="fas fa-fw fa-hand-holding-heart"></i>
+                    <span>Rent</span>
+                </a>
+            </li>
             <hr class="sidebar-divider my-0">
             <li class="nav-item @yield('book-categories-active')">
                 <a class="nav-link" href="{{route('admin.book-categories')}}">
@@ -236,7 +245,13 @@
             $(".back-btn").click(function (e) {
                 e.preventDefault();
                 window.history.go(-1)
-              })
+            })
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
         });
     </script>
     @yield('script')

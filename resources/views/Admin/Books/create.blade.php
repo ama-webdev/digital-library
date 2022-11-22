@@ -71,20 +71,20 @@
                             <img src="{{asset('images/template/preview.jpg')}}" alt="" id="preview-image">
                         </div>
                         <div class="mb-3">
-                            <label for="file" class="form-label">File</label>
-                            <input type="file" class="form-control-file  @error('file') is-invalid @enderror" id="file" name="file" value="{{old('file')}}" id="file">
-                            @error('file')
+                            <label for="description" class="form-label">Description</label>
+                            <textarea name="description" class="form-control  @error('description') is-invalid @enderror" id="description">
+                                {{old('description')}}
+                            </textarea>
+                            @error('description')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea name="description" class="form-control  @error('description') is-invalid @enderror" id="description">
-                                {{old('description')}}
-                            </textarea>
-                            @error('description')
+                            <label for="qty" class="form-label">Qty</label>
+                            <input type="number" class="form-control  @error('qty') is-invalid @enderror" id="qty" name="qty" value="{{old('qty')}}">
+                            @error('qty')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

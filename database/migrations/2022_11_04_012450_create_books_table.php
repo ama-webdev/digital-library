@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('photo');
-            $table->string('file');
             $table->string('author');
+            $table->decimal('qty');
             $table->timestamps();
 
             $table->foreign('book_category_id')->references('id')->on('book_categories')->onDelete('cascade');
