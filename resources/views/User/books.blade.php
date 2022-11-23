@@ -5,7 +5,8 @@
    .book{
         border:1px solid #ddd;
         border-radius: 3px;
-        overflow: hidden
+        overflow: hidden;
+        position: relative;
     }
     .book img{
         max-width: 100%;
@@ -16,6 +17,15 @@
     }
     .book img:hover{
         transform: scale(1.1)
+    }
+    .done{
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        top: -15px;
+        left: -15px;
+        background: crimson;
+        transform: rotate(45deg);
     }
 </style>
 @endsection
@@ -37,7 +47,8 @@
                 <select name="" id="" class="form-select cat-input">
                     <option value="">Select category</option>
                     @foreach($categories as $category)
-                    <option value="{{$category->id}}" @if ($cat == $category->id) selected @endif>               {{$category->name}}
+                    <option value="{{$category->id}}" @if ($cat == $category->id) selected @endif>               
+                        {{$category->name}}
                     </option>
                     @endforeach
                 </select>
@@ -45,11 +56,15 @@
             <div class="col-lg-3 col-md-6 col-sm-12 col-12 my-1">
                 <button class="btn btn-danger w-100 search-btn">Search</button>
             </div>
+            
         </div>
         <div class="row mt-3">
             @foreach($books as $book)
                 <div class="col-lg-3 col-md-6 col-sm-12 col-12 mb-3">
                     <div class="book">
+                        @if (in_array($book->id,$read_books))
+                            <div class="done"></div>
+                        @endif
                     <img src="{{asset($book->photo)}}" alt="">
                     <div class="p-3">
                         <a href="{{route('user.book-detail',$book->id)}}" class="fw-bold">{{$book->title}}</a>

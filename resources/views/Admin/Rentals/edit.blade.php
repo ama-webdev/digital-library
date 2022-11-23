@@ -95,14 +95,20 @@
                         <label for="">End Date (Y-m-d) <span class="text-danger">*</span></label>
                         <input type="date" name="end_date" value="{{\Carbon\Carbon::parse($rental->end_date)->format('Y-m-d')}}" class="form-control end_date" @if ($rental->status=='borrow') readonly @endif>
                     </div>
+                    <div class="form-group">
+                        <label for="">Remark (Optional)</label>
+                        <textarea name="remark" class="form-control" @if ($rental->status=='borrow') readonly @endif>
+                            {{$rental->admin_remark}}
+                        </textarea>
+                    </div>
                     @if ($rental->status=='draft')
                         <div class="form-group">
-                            <button class="btn btn-primary btn-sm" type="submit">Rent</button>
+                            <button class="btn btn-primary" type="submit">Rent</button>
                         </div>
                     @endif
                     @if ($rental->status=='borrow')
                         <div class="form-group">
-                            <button class="btn btn-primary btn-sm" type="submit">Return</button>
+                            <button class="btn btn-primary" type="submit">Return</button>
                         </div>
                     @endif
                 </form>

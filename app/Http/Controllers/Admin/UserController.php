@@ -19,7 +19,7 @@ class UserController extends Controller
     }
     public function index()
     {
-        $users = User::paginate(10);
+        $users = User::orderBy('id', 'desc')->paginate(10);
         return view('admin.users.index', compact('users'));
     }
 
@@ -36,12 +36,16 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|max:20',
             'confirm_password' => 'required|same:password',
-            'role' => 'required|exists:roles,name'
+            'role' => 'required|exists:roles,name',
+            'nrc' => 'required|string|unique:users,nrc',
+            'address' => 'required|string',
         ]);
 
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->address = $request->address;
+        $user->nrc = $request->nrc;
         $user->password = Hash::make($request->password);
         $user->save();
         $user->assignRole($request->role);
@@ -57,14 +61,19 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $$request->validate([
+        $request->validate([
             'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'nrc' => 'required|string|unique:users,nrc,' . $id,
+            'address' => 'required|string',
+
         ]);
 
         $user = User::findOrFail($id);
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->nrc = $request->nrc;
+        $user->address = $request->address;
         $user->update();
 
         return redirect()->route('admin.users');

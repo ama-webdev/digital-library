@@ -8,7 +8,10 @@
 @endsection
 @section('content')
     <div class="container wrapper">
-        <h3 class="text-center mt-3">Your Rental List</h3>
+        <h3 class="text-center mt-5">Your Rental List</h3>
+        @if($read_count > 0)
+        <p class="text-center text-success">Congratulations, you have read {{$read_count}} books.</p>
+        @endif
         <div class="row justify-content-center mt-5">
             <div class="col-lg-8 col-md-10 col-sm-12 col-12">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">

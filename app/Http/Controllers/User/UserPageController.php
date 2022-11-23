@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Helper\UUID;
 use App\Models\Book;
+use App\Models\User;
 use App\Models\Rental;
 use App\Models\BookCategory;
 use App\Models\RentalDetail;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserPageController extends Controller
@@ -37,9 +39,17 @@ class UserPageController extends Controller
             $query->where('author', 'LIKE', '%' . $author . '%');
         })->when($title, function ($query, $title) {
             $query->where('title', 'LIKE', '%' . $title . '%');
-        })->paginate(12);
+        })->orderBy('id', 'desc')
+            ->paginate(12);
         $categories = BookCategory::all();
-        return view('user.books', compact('books', 'categories'));
+        $rentals = Rental::where('user_id', Auth::user()->id)->where('status', 'return')->get();
+        $read_books = [];
+        foreach ($rentals as $rental) {
+            foreach ($rental->rental_details as $detail) {
+                array_push($read_books, $detail->book_id);
+            }
+        }
+        return view('user.books', compact('books', 'categories', 'read_books'));
     }
     public function bookDetail(Request $request, $id)
     {
@@ -93,7 +103,7 @@ class UserPageController extends Controller
             $rental->start_date = now();
             $rental->end_date = $end_date;
             $rental->total = $total_books;
-            $rental->remark = $remark;
+            $rental->user_remark = $remark;
             $rental->save();
 
             foreach ($books as $book) {
@@ -101,7 +111,6 @@ class UserPageController extends Controller
                 $detail->rental_id = $rental->id;
                 $detail->book_id = $book->id;
                 $detail->qty = $book->qty;
-                $detail->status = 'draft';
                 $detail->save();
 
                 $primary_book = Book::find($book->id);
@@ -119,7 +128,16 @@ class UserPageController extends Controller
     public function rentalList(Request $request)
     {
         $rentals = Rental::where('user_id', Auth::user()->id)->get();
-        return view('user.rental-list', compact('rentals'));
+        $return_rentals = Rental::where('user_id', Auth::user()->id)
+            ->where('status', 'return')
+            ->get();
+        $read_count = 0;
+        if ($return_rentals) {
+            foreach ($return_rentals as $rental) {
+                $read_count += $rental->total;
+            }
+        }
+        return view('user.rental-list', compact('rentals', 'read_count'));
     }
 
     public function rentalDetail($id)
@@ -138,5 +156,27 @@ class UserPageController extends Controller
         }
         $rental->delete();
         return back();
+    }
+
+    public function showChangePassword()
+    {
+        return view('user.change-password');
+    }
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:6|max:20',
+            'confirm_password' => 'required|same:new_password',
+        ]);
+
+        if (Hash::check($request->old_password, Auth::user()->password)) {
+            $user = User::find(Auth::user()->id);
+            $user->password = Hash::make($request->new_password);
+            $user->update();
+            return back()->with('success', 'Successfully changed.');
+        } else {
+            return back()->with('error', 'Incorrect old password.');
+        }
     }
 }

@@ -11,8 +11,7 @@
             </div>
             <div class="col-lg-8 col-md-12 col-sm-12 col-12">
                 <h3 class="fw-bold">{{$book->title}}</h3>
-                <p class="text-muted mb-0">{{\Carbon\Carbon::parse($book->created_at)->format('D, M Y')}}</p>
-                <p class="fw-bold">{{$book->author}}</p>
+                <p class="text-muted">{{$book->author}}</p>
                 <p class="text-danger">{{number_format($book->qty,0)}} items left.</p>
 
                 <p>{!!$book->description!!}</p>

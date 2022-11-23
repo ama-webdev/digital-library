@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helper\UUID;
 use App\Models\Book;
-use App\Models\Rental;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Models\RentalDetail;
 use App\Models\User;
+use App\Models\Rental;
+use App\Models\RentalDetail;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class RentalController extends Controller
 {
@@ -47,7 +51,8 @@ class RentalController extends Controller
     }
     public function create(Request $request)
     {
-        return view('admin.rentals.create');
+        $books = Book::all();
+        return view('admin.rentals.create', compact('books'));
     }
     public function show($id)
     {
@@ -88,8 +93,10 @@ class RentalController extends Controller
         $rental->status = $request->status;
         $rental->start_date = $request->start_date;
         $rental->end_date = $request->end_date;
+        $rental->admin_remark = $request->remark;
         if ($request->status == 'return') {
             $rental->return_date = now();
+            $rental->rentaled_by = Auth::user()->id;
             foreach ($rental->rental_details as $item) {
                 $book = Book::find($item->book_id);
                 $book->qty += $item->qty;
@@ -98,5 +105,66 @@ class RentalController extends Controller
         }
         $rental->update();
         return redirect()->route('admin.rentals.index');
+    }
+
+    public function adminRent(Request $request)
+    {
+        $validated = $request->validate([
+            "books" => "required|array|max:3",
+            "email" => "required|exists:users,email",
+            "end_date" => "required|after:now"
+        ]);
+        $email = $request->email;
+        $books = $request->books;
+        $end_date = $request->end_date;
+        $remark = $request->remark;
+
+        $user = User::where('email', $email)->first();
+
+        $previous_rentals = Rental::where('user_id', $user->id)->where('status', '!=', 'return')->get();
+        $total = 0;
+        if ($previous_rentals) {
+            foreach ($previous_rentals as $rental) {
+                $total += $rental->total;
+            }
+            if ($total >= 3) {
+                return back()->withErrors(['custom_error' => ['You borrowed ' . $total . ' books earlier. Therefore, you have to return those ' . $total . ' books and then borrow again.']]);
+            }
+        }
+
+        if ($total + count($books) > 3) {
+            return back()->withErrors(['custom_error' => ["You have only " . 3 - $total . ' books left to borrow. Please reduce some books.']]);
+        }
+
+        DB::beginTransaction();
+        try {
+            $rental = new Rental();
+            $rental->user_id = $user->id;
+            $rental->code = UUID::generate();
+            $rental->start_date = now();
+            $rental->end_date = $end_date;
+            $rental->total = count($books);
+            $rental->status = 'borrow';
+            $rental->admin_remark = $remark;
+            $rental->rentaled_by = Auth::user()->id;
+            $rental->save();
+
+            foreach ($books as $book) {
+                RentalDetail::create([
+                    'rental_id' => $rental->id,
+                    'book_id' => $book,
+                    'qty' => 1,
+                ]);
+
+                $book = Book::find($book);
+                $book->qty -= 1;
+                $book->update();
+            }
+            DB::commit();
+            return redirect()->route('admin.rentals.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors($e->getMessage());
+        }
     }
 }

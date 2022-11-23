@@ -98,7 +98,6 @@
                         <th>Email</th>
                         <th>Start Date</th>
                         <th>End Date</th>
-                        <th>Return Date</th>
                         <th>Total</th>
                         <th>Status</th>
                         <th>Duration</th>
@@ -115,7 +114,6 @@
                         <td>{{$rental->user->email}}</td>
                         <td>{{\Carbon\Carbon::parse($rental->start_date)->format('d-m-Y')}}</td>
                         <td>{{\Carbon\Carbon::parse($rental->end_date)->format('d-m-Y')}}</td>
-                        <td>{{\Carbon\Carbon::parse($rental->return_date)->format('d-m-Y')}}</td>
                         <td>{{$rental->total}}</td>
                         <td class="text-uppercase">{{$rental->status}}</td>
                         @php

@@ -1,5 +1,5 @@
 @extends('admin.layouts.master')
-@section('books-active')
+@section('damage-books-active')
     active
 @endsection
 @section('style')
@@ -10,11 +10,11 @@
     </style>
 @endsection
 @section('content-title')
-    Books
+    Damage Books
 @endsection
 @section('content-btn')
-    <a href="{{route('admin.books.create')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-plus fa-sm text-white-50"></i> New Book
+    <a href="{{route('admin.damage-books.create')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-plus fa-sm text-white-50"></i> New Damage
     </a>
 @endsection
 @section('content')
@@ -27,37 +27,38 @@
                         <th>Photo</th>
                         <th>Title</th>
                         <th>Author</th>
-                        <th>Description</th>
-                        <th>Category</th>
+                        <th>Lost By</th>
+                        <th>Noted by</th>
                         <th>Qty</th>
+                        <th>Remark</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($books as $book)
+                    @foreach ($damages as $damage)
                         <tr>
                             <td>
-                                <img src="{{$book->photo}}" alt="">
+                                <img src="{{$damage->book->photo}}" alt="">
                             </td>
-                            <td>{{$book->title}}</td>
-                            <td>{{$book->author}}</td>
-                            <td>{!! Str::limit($book->description, 30) !!}</td>
-                            <td>{{$book->book_category->name}}</td>
-                            <td>{{number_format($book->qty)}}</td>
+                            <td>{{$damage->book->title}}</td>
+                            <td>{{$damage->book->author}}</td>
+                            <td>{{$damage->user->name}}</td>
+                            <td>{{$damage->notedBy->name}}</td>
+                            <td>{{$damage->qty}}</td>
+                            <td>{{$damage->remark}}</td>
                             <td>
-                               <div class="btn-group">
-                                    <a href="{{route('admin.books.edit',$book->id)}}" class="btn btn-sm btn-warning">Edit</a>
+                               {{-- <div class="btn-group"> --}}
                                     <a href="" class="btn btn-sm btn-danger delete-btn">Delete</a>
-                                    <form action="{{route('admin.books.destroy',$book->id)}}" method="POST" class="d-none delete-form">
+                                    <form action="{{route('admin.damage-books.destroy',$damage->id)}}" method="POST" class="d-none delete-form">
                                         @csrf
                                     </form>
-                               </div>
+                               {{-- </div> --}}
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
-            {{$books->links()}}
+            {{$damages->links()}}
         </div>
        </div>
     </div>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\UserPageController;
 use App\Http\Controllers\Admin\AdminPageController;
 use App\Http\Controllers\Admin\BookCategoryController;
+use App\Http\Controllers\Admin\DamageController;
 use App\Http\Controllers\Admin\RentalController;
 
 Auth::routes();
@@ -25,7 +26,6 @@ Route::middleware(['auth'])->name('user.')->group(function () {
 
     Route::get('change-password', [UserPageController::class, 'showChangePassword'])->name('show-change-password');
     Route::post('change-password', [UserPageController::class, 'changePassword'])->name('change-password');
-    Route::post('change-student-password', [UserPageController::class, 'changeStudentPassword'])->name('change-student-password');
 });
 
 Route::middleware(['auth', 'role:admin'])->name('admin.')->prefix('admin')->group(function () {
@@ -56,6 +56,14 @@ Route::middleware(['auth', 'role:admin|librarian'])->name('admin.')->prefix('adm
     Route::post('/books/{id}/update', [BookController::class, 'update'])->name('books.update');
     Route::post('/books/{id}/destroy', [BookController::class, 'destroy'])->name('books.destroy');
 
+    // books
+    Route::get('/damage-books', [DamageController::class, 'index'])->name('damage-books');
+    Route::get('/damage-books/create', [DamageController::class, 'create'])->name('damage-books.create');
+    Route::post('/damage-books', [DamageController::class, 'insert'])->name('damage-books.insert');
+    Route::get('/damage-books/{id}/edit', [DamageController::class, 'edit'])->name('damage-books.edit');
+    Route::post('/damage-books/{id}/update', [DamageController::class, 'update'])->name('damage-books.update');
+    Route::post('/damage-books/{id}/destroy', [DamageController::class, 'destroy'])->name('damage-books.destroy');
+
     // change password
     Route::get('change-password', [AdminPageController::class, 'changePassword'])->name('change-password');
     Route::get('change-student-password', [AdminPageController::class, 'showChangeStudentPassword'])->name('change-student-password');
@@ -65,8 +73,14 @@ Route::middleware(['auth', 'role:admin|librarian'])->name('admin.')->prefix('adm
     Route::get('/rentals/{id}', [RentalController::class, 'show'])->name('rentals.show');
     Route::post('/rentals/delete/{id}', [RentalController::class, 'destroy'])->name('rentals.destroy');
     Route::post('/rentals/rent/{id}', [RentalController::class, 'rent'])->name('rentals.rent');
+    Route::post('/rentals/admin/rent', [RentalController::class, 'adminRent'])->name('rentals.admin-rent');
     Route::get('/rentals/edit/{id}', [RentalController::class, 'edit'])->name('rentals.edit');
-    Route::get('/rentals/create', [RentalController::class, 'create'])->name('rentals.create');
+    Route::get('/rentals/new/create', [RentalController::class, 'create'])->name('rentals.create');
     // rent-detail
     Route::post('/rentals-detail/delete/{id}', [RentalController::class, 'detailDelete'])->name('rental-detail.delete');
+
+    // change password
+    Route::get('change-password', [AdminPageController::class, 'changePassword'])->name('change-password');
+    Route::get('change-student-password', [AdminPageController::class, 'showChangeStudentPassword'])->name('change-student-password');
+    Route::post('change-student-password', [AdminPageController::class, 'changeStudentPassword'])->name('change-student-password');
 });

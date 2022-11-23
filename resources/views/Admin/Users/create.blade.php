@@ -12,7 +12,7 @@
 @endsection
 @section('content')
     <div class="row justify-content-center">
-       <div class="col-lg-5 col-md-6 col-sm-12 col-12">
+       <div class="col-lg-7 col-md-8 col-sm-12 col-12">
             <div class="card">
                 <div class="card-header">
                     <h5 class="fw-bold">Add New User</h5>
@@ -38,6 +38,27 @@
                                 </span>
                             @enderror
                         </div>
+                        <div class="mb-3">
+                            <label for="nrc" class="form-label">Nrc</label>
+                            <input type="nrc" class="form-control  @error('nrc') is-invalid @enderror" id="nrc" name="nrc" value="{{old('nrc')}}">
+                            @error('nrc')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea name="address" class="form-control  @error('address') is-invalid @enderror" id="address" value="{{old('address')}}" >
+                                {{old('address')}}
+                            </textarea>
+                            @error('address')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        
                          <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input type="password" class="form-control  @error('password') is-invalid @enderror" id="password" name="password" value="{{old('password')}}">

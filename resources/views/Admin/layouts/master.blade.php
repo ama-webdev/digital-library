@@ -17,7 +17,7 @@
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <!-- Custom styles for this template-->
     <link href="{{asset('css/admin/sb-admin-2.min.css')}}" rel="stylesheet">
     @yield('style')
@@ -75,6 +75,20 @@
                 <a class="nav-link" href="{{route('admin.books')}}">
                     <i class="fas fa-fw fa-book"></i>
                     <span>Books</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item @yield('damage-books-active')">
+                <a class="nav-link" href="{{route('admin.damage-books')}}">
+                    <i class="fas fa-fw fa-book-medical"></i>
+                    <span>Damage Books</span>
+                </a>
+            </li>
+            <hr class="sidebar-divider my-0">
+            <li class="nav-item @yield('lock-active')">
+                <a class="nav-link" href="{{route('admin.change-student-password')}}">
+                    <i class="fas fa-fw fa-lock"></i>
+                    <span>Change User Password</span>
                 </a>
             </li>
             <hr class="sidebar-divider my-0">
@@ -157,6 +171,10 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="{{route('admin.change-password')}}">
+                                    <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    <span>Change Password</span>
+                                </a>
                                 {{-- <div class="dropdown-divider"></div> --}}
                                 <a class="dropdown-item" href="{{route('logout')}}" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -235,11 +253,10 @@
 
     <!-- Core plugin JavaScript-->
     <script src="{{asset('jquery-easing/jquery.easing.min.js')}}"></script>
-
     <!-- Custom scripts for all pages-->
     <script src="{{asset('js/admin/sb-admin-2.min.js')}}"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
     <script>
         $(document).ready(function () {
             $(".back-btn").click(function (e) {

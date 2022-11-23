@@ -8,6 +8,7 @@
     <title>Digital Library</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css">
+    
     <link rel="stylesheet" href="{{asset('css/user/owl.carousel.min.css')}}">
     <link rel="stylesheet" href="{{asset('css/user/owl.theme.default.min.css')}}">
     <link rel="stylesheet" href="{{asset('css/user/master.css')}}">
@@ -55,13 +56,16 @@
             </a>
 
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="{{ route('user.rental-list') }}">
+                  Rental List
+              </a>
+              <a class="dropdown-item" href="{{ route('user.show-change-password') }}">
+                    Change Password
+                </a>
                 <a class="dropdown-item" href="{{ route('logout') }}"
                     onclick="event.preventDefault();
                                     document.getElementById('logout-form').submit();">
                     {{ __('Logout') }}
-                </a>
-                <a class="dropdown-item" href="{{ route('user.rental-list') }}">
-                    Rental List
                 </a>
 
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

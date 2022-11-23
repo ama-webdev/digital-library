@@ -9,9 +9,9 @@
     Rentals
 @endsection
 @section('content-btn')
-{{-- <a href="{{route('admin.rentals.create')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-    <i class="fas fa-plus fa-sm text-white-50"></i> Rent
-</a> --}}
+<a href="{{route('admin.rentals.create')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <i class="fas fa-hand-holding-heart fa-sm text-white-50"></i> Rent
+</a>
 @endsection
 @section('content')
     <div class="row">
@@ -78,16 +78,18 @@
                 <thead>
                     <tr>
                         <th>Code</th>
-                        <th>Username</th>
+                        {{-- <th>Username</th> --}}
                         <th>Email</th>
-                        <th>Start Date</th>
+                        {{-- <th>Start Date</th>
                         <th>End Date</th>
-                        <th>Return Date</th>
+                        <th>Return Date</th> --}}
                         <th>Total</th>
                         <th>Status</th>
-                        <th>Duration</th>
+                        <th>Admin Remark</th>
+                        <th>User Remark</th>
+                        {{-- <th>Duration</th>
                         <th>Remain</th>
-                        <th>Over</th>
+                        <th>Over</th> --}}
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -95,14 +97,16 @@
                     @foreach ($rentals as $rental)
                     <tr>
                         <td>{{$rental->code}}</td>
-                        <td>{{$rental->user->name}}</td>
+                        {{-- <td>{{$rental->user->name}}</td> --}}
                         <td>{{$rental->user->email}}</td>
-                        <td>{{\Carbon\Carbon::parse($rental->start_date)->format('d-m-Y')}}</td>
+                        {{-- <td>{{\Carbon\Carbon::parse($rental->start_date)->format('d-m-Y')}}</td>
                         <td>{{\Carbon\Carbon::parse($rental->end_date)->format('d-m-Y')}}</td>
-                        <td>{{\Carbon\Carbon::parse($rental->return_date)->format('d-m-Y')}}</td>
+                        <td>{{\Carbon\Carbon::parse($rental->return_date)->format('d-m-Y')}}</td> --}}
                         <td>{{$rental->total}}</td>
                         <td class="text-uppercase">{{$rental->status}}</td>
-                        @php
+                        <td>{{$rental->admin_remark}}</td>
+                        <td>{{$rental->user_remark}}</td>
+                        {{-- @php
                             $end_date=\Carbon\Carbon::parse($rental->end_date);
                             $start_date=\Carbon\Carbon::parse($rental->start_date);
                             if($rental->end_date < now()){
@@ -128,7 +132,7 @@
                             @else
                             -
                             @endif
-                        </td>
+                        </td> --}}
                          <td>
                             <a href="{{route('admin.rentals.show',$rental->id)}}" class="">
                                 <i class="fas fa-info-circle text-success"></i>
@@ -151,7 +155,6 @@
                     @endforeach
                 </tbody>
             </table>
-            
         </div>
        </div>
     </div>

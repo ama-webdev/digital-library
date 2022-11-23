@@ -22,7 +22,8 @@ return new class extends Migration
             $table->dateTime('return_date')->nullable();
             $table->integer('total');
             $table->enum('status', ['draft', 'borrow', 'return']);
-            $table->text('remark')->nullable();
+            $table->text('user_remark')->nullable();
+            $table->text('admin_remark')->nullable();
             $table->unsignedBigInteger('rentaled_by')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
