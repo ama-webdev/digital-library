@@ -19,6 +19,7 @@ class RentalController extends Controller
     {
         $code = $request->code;
         $email = $request->email;
+        $nrc = $request->nrc;
         $start_date = $request->start_date;
         $end_date = $request->end_date;
         $status = $request->status;
@@ -26,6 +27,15 @@ class RentalController extends Controller
         $rentals = Rental::with('user')
             ->when($email, function ($query, $email) {
                 $user = User::where('email', $email)->first();
+                if ($user) {
+                    $user_id = $user->id;
+                } else {
+                    $user_id = 0;
+                }
+                $query->where('user_id', $user_id);
+            })
+            ->when($nrc, function ($query, $nrc) {
+                $user = User::where('nrc', $nrc)->first();
                 if ($user) {
                     $user_id = $user->id;
                 } else {

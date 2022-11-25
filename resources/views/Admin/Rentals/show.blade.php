@@ -7,7 +7,7 @@
         img{
             max-width: 50px;
         }
-        .detail-table td{
+        .detail-table td,.detail-table th{
             min-width: 100px;
             height: 40px;
         }
@@ -23,39 +23,39 @@
 @endsection
 @section('content')
    <div class="row">
-    <div class="col-4 my-5">
+    <div class="col-lg-4 my-5">
         <table class="detail-table">
             <tr>
-                <td>Code</td>
+                <th>Code</th>
                 <td>{{$rental->code}}</td>
             </tr>
             <tr>
-                <td>UserName</td>
+                <th>UserName</th>
                 <td>{{$rental->user->name}}</td>
             </tr>
             <tr>
-                <td>Email</td>
+                <th>Email</th>
                 <td>{{$rental->user->email}}</td>
             </tr>
             <tr>
-                <td>NRC No</td>
+                <th>NRC No</th>
                 <td>{{$rental->user->nrc ?? '-'}}</td>
             </tr>
             <tr>
-                <td>Address</td>
+                <th>Address</th>
                 <td>{{$rental->user->address ?? '-'}}</td>
             </tr>
             <tr>
-                <td>Status</td>
+                <th>Status</th>
                 <td class="text-uppercase">{{$rental->status}}</td>
             </tr>
             <tr>
-                <td>Total</td>
+                <th>Total</th>
                 <td>{{$rental->total}} books</td>
             </tr>
         </table>
     </div>
-    <div class="col-4 my-5">
+    <div class="col-lg-4 my-5">
         <table class="detail-table">
             @php
                 $end_date=\Carbon\Carbon::parse($rental->end_date);
@@ -70,27 +70,27 @@
                 $duration = ($start_date->diffInDays($end_date) + 1) .' days';
             @endphp
             <tr>
-                <td>Start Date</td>
-                <td>{{\Carbon\Carbon::parse($rental->start_date)->format('d-m-Y')}}</td>
+                <th>Start Date</th>
+                <td>{{$rental->start_date ? \Carbon\Carbon::parse($rental->start_date)->format('d-m-Y') : '-'}}</td>
             </tr>
             <tr>
-                <td>End Date</td>
-                <td>{{\Carbon\Carbon::parse($rental->end_date)->format('d-m-Y')}}</td>
+                <th>End Date</th>
+                <td>{{$rental->end_date ? \Carbon\Carbon::parse($rental->end_date)->format('d-m-Y') : '-'}}</td>
             </tr>
             <tr>
-                <td>Return Date</td>
-                <td>{{\Carbon\Carbon::parse($rental->return_date)->format('d-m-Y')}}</td>
+                <th>Return Date</th>
+                <td>{{$rental->return_date ? \Carbon\Carbon::parse($rental->return_date)->format('d-m-Y') : '-'}}</td>
             </tr>
             <tr>
-                <td>Rent by</td>
+                <th>Rent by</th>
                 <td>{{$rental->rentaledby->name ?? '-'}}</td>
             </tr>
             <tr>
-                <td>Duration</td>
+                <th>Duration</th>
                 <td>{{$duration}}</td>
             </tr>
             <tr>
-                <td>Remain</td>
+                <th>Remain</th>
                 @if($rental->status=='borrow')
                 <td>{{$remain}}</td>
                 @else
@@ -98,12 +98,24 @@
                 @endif
             </tr>
             <tr>
-                <td>Over</td>
+                <th>Over</th>
                 @if($rental->status=='borrow')
                 <td>{{$over}}</td>
                 @else
                 <td> - </td>
                 @endif
+            </tr>
+        </table>
+    </div>
+    <div class="col-lg-4 my-5">
+        <table class="detail-table">
+            <tr>
+                <th>Admin Remark</th>
+                <td>{{$rental->admin_remark ?? '-'}}</td>
+            </tr>
+            <tr>
+                <th>User Remark</th>
+                <td>{{$rental->user_remark ?? '-'}}</td>
             </tr>
         </table>
     </div>

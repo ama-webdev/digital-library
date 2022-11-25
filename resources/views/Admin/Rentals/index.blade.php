@@ -22,6 +22,7 @@
                 $code = app('request')->input('code');
                 $email = app('request')->input('email');
                 $status = app('request')->input('status');
+                $nrc = app('request')->input('nrc');
             @endphp
                 <div class="form-group">
                     <label for="">Code</label>
@@ -32,6 +33,12 @@
                 <div class="form-group">
                     <label for="">Email</label>
                     <input type="email" class="form-control email" value="{{$email}}">
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="">Nrc No</label>
+                    <input type="text" class="form-control nrc" value="{{$nrc}}">
                 </div>
             </div>
             {{-- <div class="col-lg-3 col-md-6 col-sm-12 col-12">
@@ -65,7 +72,7 @@
             </div>
             <div class="col-lg-3 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
-                    <div class="btn-group" style="margin-top: 2rem">
+                    <div class="btn-group" style="margin-top: 0rem">
                         <button class="btn btn-danger form-control search">Search</button>
                     </div>
                 </div>
@@ -80,6 +87,7 @@
                         <th>Code</th>
                         {{-- <th>Username</th> --}}
                         <th>Email</th>
+                        <th>NRC No</th>
                         {{-- <th>Start Date</th>
                         <th>End Date</th>
                         <th>Return Date</th> --}}
@@ -99,6 +107,7 @@
                         <td>{{$rental->code}}</td>
                         {{-- <td>{{$rental->user->name}}</td> --}}
                         <td>{{$rental->user->email}}</td>
+                        <td>{{$rental->user->nrc}}</td>
                         {{-- <td>{{\Carbon\Carbon::parse($rental->start_date)->format('d-m-Y')}}</td>
                         <td>{{\Carbon\Carbon::parse($rental->end_date)->format('d-m-Y')}}</td>
                         <td>{{\Carbon\Carbon::parse($rental->return_date)->format('d-m-Y')}}</td> --}}
@@ -185,8 +194,8 @@
                 var status = $(".status").val();
                 var email = $(".email").val();
                 var code = $(".code").val();
-
-                history.pushState(null,'',`?code=${code}&email=${email}&status=${status}`);
+                var nrc = $(".nrc").val();
+                history.pushState(null,'',`?code=${code}&email=${email}&nrc=${nrc}&status=${status}`);
                 // window.location.reload();
             }
             $('.status').change(function (e) { 
@@ -195,6 +204,12 @@
                 window.location.reload()
             });
             $('.code').keyup(function (e) { 
+                if(e.keyCode==13){
+                    search()
+                    window.location.reload()
+                }
+            });
+            $('.nrc').keyup(function (e) { 
                 if(e.keyCode==13){
                     search()
                     window.location.reload()
