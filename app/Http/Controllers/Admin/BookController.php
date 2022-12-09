@@ -35,7 +35,9 @@ class BookController extends Controller
             'description' => 'required|string',
             'book_category_id' => 'required|exists:book_categories,id',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'qty' => 'required|integer'
+            'type' => 'required|in:free,paid',
+            'qty' => 'nullable|required_if:type,paid|integer',
+            'file' => 'nullable|required_if:type,free|mimes:pdf',
         ]);
 
         $title = $request->title;
@@ -44,12 +46,20 @@ class BookController extends Controller
         $description = $request->description;
         $book_category_id = $request->book_category_id;
         $qty = $request->qty;
+        $file = $request->file;
+        $type = $request->type;
 
         // store image in products folder
         $photo_name = uniqid() . date('Ymd') .  '.' . $photo->extension();
         $photo_url = "/images/template/books/$photo_name";
         $photo->move(public_path('/images/template/books'), $photo_name);
 
+        if ($type == 'free') {
+            // store pdf in ebook folder
+            $file_name = uniqid() . date('Ymd') .  '.' . $file->extension();
+            $file_url = "/files/template/ebooks/$file_name";
+            $file->move(public_path('/files/template/ebooks'), $file_name);
+        }
 
         // insert record
         $book = new Book();
@@ -58,7 +68,12 @@ class BookController extends Controller
         $book->author = $author;
         $book->description = $description;
         $book->book_category_id = $book_category_id;
-        $book->qty = $qty;
+        if ($type == 'free') {
+            $book->file = $file_url;
+        } else {
+            $book->qty = $qty;
+        }
+        $book->type = $type;
         $book->save();
         return redirect()->route('admin.books');
     }
@@ -79,7 +94,9 @@ class BookController extends Controller
             'description' => 'required|string',
             'book_category_id' => 'required|exists:book_categories,id',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'qty' => 'required|integer'
+            'type' => 'required|in:free,paid',
+            'qty' => 'nullable|required_if:type,paid|integer',
+            'file' => 'nullable|required_if:type,free|mimes:pdf',
         ]);
 
         $title = $request->title;
@@ -88,6 +105,8 @@ class BookController extends Controller
         $description = $request->description;
         $book_category_id = $request->book_category_id;
         $qty = $request->qty;
+        $file = $request->file;
+        $type = $request->type;
 
         if ($photo) {
             // store image in products folder
@@ -104,13 +123,35 @@ class BookController extends Controller
             $photo_url = $old_photo;
         }
 
+        if ($type == 'free') {
+            if ($file) {
+                // store pdf in ebook folder
+                $file_name = uniqid() . date('Ymd') .  '.' . $file->extension();
+                $file_url = "files/template/ebooks/$file_name";
+                $file->move(public_path('files/template/ebooks'), $file_name);
+
+                // delete old image if has new image
+                $old_file_url = substr($old_file, 1);
+                if (File::exists($old_file_url)) {
+                    File::delete($old_file_url);
+                }
+            } else {
+                $file_url = $old_file;
+            }
+        }
+
         // insert record
         $book->title = $title;
         $book->photo = $photo_url;
         $book->author = $author;
         $book->description = $description;
         $book->book_category_id = $book_category_id;
-        $book->qty = $qty;
+        if ($type == 'free') {
+            $book->file = $file_url;
+        } else {
+            $book->qty = $qty;
+        }
+        $book->type = $type;
         $book->update();
         return redirect()->route('admin.books');
     }

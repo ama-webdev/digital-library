@@ -3,34 +3,35 @@
     active
 @endsection
 @section('content-title')
-  Edit Book
+    Edit Book
 @endsection
 @section('style')
     <style>
-        img{
+        img {
             max-width: 200px;
             margin-top: 1rem;
         }
     </style>
 @endsection
 @section('content-btn')
-<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm back-btn">
-    <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back
-</a>
+    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm back-btn">
+        <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back
+    </a>
 @endsection
 @section('content')
     <div class="row justify-content-center">
-       <div class="col-lg-7 col-md-7 col-sm-12 col-12">
+        <div class="col-lg-7 col-md-7 col-sm-12 col-12">
             <div class="card">
                 <div class="card-header">
                     <h5 class="fw-bold">Edit Book </h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{route('admin.books.update',$book->id)}}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.books.update', $book->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control  @error('title') is-invalid @enderror" id="title" name="title" value="{{old('title',$book->title)}}">
+                            <input type="text" class="form-control  @error('title') is-invalid @enderror" id="title"
+                                name="title" value="{{ old('title', $book->title) }}">
                             @error('title')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -39,7 +40,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="author" class="form-label">Author</label>
-                            <input type="text" class="form-control  @error('author') is-invalid @enderror" id="author" name="author" value="{{old('author',$book->author)}}">
+                            <input type="text" class="form-control  @error('author') is-invalid @enderror" id="author"
+                                name="author" value="{{ old('author', $book->author) }}">
                             @error('author')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -48,10 +50,13 @@
                         </div>
                         <div class="mb-3">
                             <label for="book_category" class="form-label">Book Bategory</label>
-                            <select name="book_category_id" id="book_category" class="form-control @error('book_category_id') is-invalid @enderror"">
+                            <select name="book_category_id" id="book_category"
+                                class="form-control @error('book_category_id') is-invalid @enderror"">
                                 <option value="">select book category</option>
                                 @foreach ($book_categories as $book_category)
-                                <option value="{{$book_category->id}}" @if (old('book_category_id')==$book_category->id || $book->book_category_id == $book_category->id)  selected @endif>{{$book_category->name}}</option>
+                                    <option value="{{ $book_category->id }}"
+                                        @if (old('book_category_id') == $book_category->id || $book->book_category_id == $book_category->id) selected @endif>{{ $book_category->name }}
+                                    </option>
                                 @endforeach
                             </select>
                             @error('book_category_id')
@@ -60,20 +65,44 @@
                                 </span>
                             @enderror
                         </div>
-                       <div class="mb-3">
+                        <div class="mb-3">
                             <label for="photo" class="form-label">Photo</label>
-                            <input type="file" class="form-control-file  @error('photo') is-invalid @enderror" id="photo" name="photo" value="{{old('photo')}}" id="photo">
+                            <input type="file" class="form-control-file  @error('photo') is-invalid @enderror"
+                                id="photo" name="photo" value="{{ old('photo') }}" id="photo">
                             @error('photo')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
-                            <img src="{{asset($book->photo)}}" alt="" id="preview-image">
+                            <img src="{{ asset($book->photo) }}" alt="" id="preview-image">
+                        </div>
+                        <div class="mb-3">
+                            <label for="file" class="form-label">File</label>
+                            <input type="file" class="form-control-file  @error('file') is-invalid @enderror"
+                                id="file" name="file" value="{{ old('file') }}" id="file">
+                            @error('file')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Type</label>
+                            <select name="type" id="type" class="form-control @error('type') is-invalid @enderror">
+                                <option value="free" @if (old('type') == 'free' || $book->type == 'free') selected @endif>Free</option>
+                                <option value="paid" @if (old('type') == 'paid' || $book->type == 'paid') selected @endif>Paid</option>
+                            </select>
+                            @error('type')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea name="description" class="form-control  @error('description') is-invalid @enderror" id="description">
-                                {{old('description',$book->description)}}
+                                {{ old('description', $book->description) }}
                             </textarea>
                             @error('description')
                                 <span class="invalid-feedback" role="alert">
@@ -83,7 +112,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="qty" class="form-label">Qty</label>
-                            <input type="number" class="form-control  @error('qty') is-invalid @enderror" id="qty" name="qty" value="{{old('qty',$book->qty)}}">
+                            <input type="number" class="form-control  @error('qty') is-invalid @enderror" id="qty"
+                                name="qty" value="{{ old('qty', $book->qty) }}">
                             @error('qty')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -94,27 +124,29 @@
                     </form>
                 </div>
             </div>
-       </div>
+        </div>
     </div>
 @endsection
 @section('script')
-<script>
-    $(document).ready(function () {
-        $('#photo').change(function(){
-            let reader = new FileReader();
-            reader.onload = (e) => { 
-            $('#preview-image').attr('src', e.target.result); 
-            }
-            reader.readAsDataURL(this.files[0]); 
-        });
+    <script>
+        $(document).ready(function() {
+            $('#photo').change(function() {
+                let reader = new FileReader();
+                reader.onload = (e) => {
+                    $('#preview-image').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(this.files[0]);
+            });
 
-        ClassicEditor
-        .create( document.querySelector( '#description' ),{
-             removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed','Table','BlockQuote',],
-        } )
-        .catch( error => {
-            console.error( error );
-        } );
-    });
-</script>
+            ClassicEditor
+                .create(document.querySelector('#description'), {
+                    removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption',
+                        'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed', 'Table', 'BlockQuote',
+                    ],
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
+    </script>
 @endsection

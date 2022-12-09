@@ -20,7 +20,7 @@ class UserPageController extends Controller
     public function home()
     {
         $categories = BookCategory::all();
-        $books = Book::orderBy('id', 'desc')->where('qty', '>', 0)->take(6)->get();
+        $books = Book::orderBy('id', 'desc')->where('qty', '>', 0)->where('type', 'paid')->take(6)->get();
         return view('user.home', compact('categories', 'books'));
     }
     public function about()
@@ -32,6 +32,7 @@ class UserPageController extends Controller
         $cat = $request->cat;
         $title = $request->title;
         $author = $request->author;
+        $type = $request->type;
 
         $books = Book::when($cat, function ($query, $cat) {
             $query->where('book_category_id', $cat);
@@ -39,6 +40,8 @@ class UserPageController extends Controller
             $query->where('author', 'LIKE', '%' . $author . '%');
         })->when($title, function ($query, $title) {
             $query->where('title', 'LIKE', '%' . $title . '%');
+        })->when($type, function ($query, $type) {
+            $query->where('type', $type);
         })->where('qty', '>', 0)
             ->orderBy('id', 'desc')
             ->paginate(12);

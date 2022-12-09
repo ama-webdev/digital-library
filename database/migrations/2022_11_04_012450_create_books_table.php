@@ -20,7 +20,9 @@ return new class extends Migration
             $table->text('description');
             $table->string('photo');
             $table->string('author');
-            $table->decimal('qty');
+            $table->decimal('qty')->nullable();
+            $table->enum('type', ['free', 'paid']);
+            $table->string('file')->nullable();
             $table->timestamps();
 
             $table->foreign('book_category_id')->references('id')->on('book_categories')->onDelete('cascade');
